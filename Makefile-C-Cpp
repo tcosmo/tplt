@@ -1,0 +1,28 @@
+TARGET = target
+LIBS = -lpthread
+INCLUDE = 
+CC = gcc
+CFLAGS = -Wall -Wextra
+
+.PHONY: default all clean
+
+default: $(TARGET)
+all: default
+
+OBJECTS = $(patsubst src/%.cpp, build/%.o, $(wildcard src/*.cpp)) $(patsubst src/%.c, build/%.o, $(wildcard src/*.c))
+HEADERS = $(wildcard src/*.h)
+
+build/%.o: src/%.cpp $(HEADERS)
+	$(CC) $(CFLAGS) -I $(INCLUDE) -c $< -o $@
+
+build/%.o: src/%.c $(HEADERS)
+	$(CC) $(CFLAGS) -I $(INCLUDE) -c $< -o $@
+
+.PRECIOUS: $(TARGET) $(OBJECTS)
+
+$(TARGET): $(OBJECTS)
+	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
+
+clean:
+	-rm -f build/*.o
+	-rm -f $(TARGET)
